@@ -1,0 +1,6 @@
+$out_root/
+{
+  include rapidyaml/
+}
+
+export $out_root/rapidyaml/$import.target
