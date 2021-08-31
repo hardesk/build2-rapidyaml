@@ -1,29 +1,22 @@
+C4CORE_FAST_FLOAT = ascii_number.h decimal_to_binary.h fast_float.h fast_table.h float_common.h parse_number.h simple_decimal_conversion.h
 
-lib{rapidyaml}: upstream/rapidyaml/src/{hxx ixx txx cxx}{**} 
-#lib{c4core}: upstream/rapidyaml/ext/c4core/src/{hxx ixx txx cxx}{**} 
-#./: lib{rapidyaml} lib{c4core}
+C4CORE_FILES = ext/c4core/src/c4/{hxx cxx}{*} \
+        ext/c4core/src/c4/ext/debugbreak/hxx{debugbreak.h} \
+        ext/c4core/src/c4/ext/sg14/hxx{inplace_function.h} \
+		ext/c4core/src/c4/ext/fast_float/include/fast_float/hxx{$C4CORE_FAST_FLOAT} \
+        ext/c4core/src/c4/ext/rng/{hxx}{rng} \
+        ext/c4core/src/c4/ext/hxx{fast_float}
 
-cxx.poptions =+ "-I$out_root" "-I$src_root"
+lib{rapidyaml}: src/{hxx cxx}{**} ext/c4core/src/{hxx cxx}{*} ext/c4core/src/ext/{hxx cxx}{** -fast_float} $C4CORE_FILES
+cxx.poptions =+ "-I$src_root/src" "-I$src_root/ext/c4core/src" "-I$src_root/ext/c4core/src/c4/ext/fast_float/include"
 
-#obja{*}: cxx.poptions += 
-objs{*}: cxx.poptions += -DC4CORE_EXPORT
-
-#lib{c4core}:
-#{
-#  cxx.export.poptions = "-I$out_root" "-I$src_root"
-#}
+#if ($cxx.target.class == 'windows')
+#	objs{*}: cxx.poptions += -DC4CORE_EXPORTS
 
 lib{rapidyaml}: 
 {
-  cxx.export.poptions = "-I$out_root" "-I$src_root"
+  cxx.export.poptions =  "-I$src_root/src" "-I$src_root/ext/c4core/src" "-I$src_root/ext/c4core/src/c4/ext/fast_float/include"
 }
-
-#liba{rapidyaml}: cxx.export.poptions += -DRAPIDYAML_STATIC
-#libs{rapidyaml}: cxx.export.poptions += -DRAPIDYAML_SHARED
-
-#liba{c4core}: cxx.export.poptions += -DRAPIDYAML_STATIC
-#libs{c4core}: cxx.export.poptions += -DC4CORE_EXPORT
-
 
 # For pre-releases use the complete version to make sure they cannot be used
 # in place of another pre-release or the final version. See the version module
